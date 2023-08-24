@@ -67,7 +67,8 @@ static int gx_card_parse_i2s(struct snd_soc_card *card,
 static int gx_card_cpu_identify(struct snd_soc_dai_link_component *c,
 				char *match)
 {
-	if (of_device_is_compatible(c->of_node, DT_PREFIX "aiu")) {
+	if (of_device_is_compatible(c->of_node, DT_PREFIX "aiu") ||
+		of_device_is_compatible(c->of_node, DT_PREFIX "audin")) {
 		if (strstr(c->dai_name, match))
 			return 1;
 	}
@@ -97,6 +98,8 @@ static int gx_card_add_link(struct snd_soc_card *card, struct device_node *np,
 
 	if (gx_card_cpu_identify(dai_link->cpus, "FIFO"))
 		return  meson_card_set_fe_link(card, dai_link, np, true);
+	else if (gx_card_cpu_identify(dai_link->cpus, "toDDR"))
+		return  meson_card_set_fe_link(card, dai_link, np, false);
 
 	ret = meson_card_set_be_link(card, dai_link, np);
 	if (ret)
@@ -107,9 +110,15 @@ static int gx_card_add_link(struct snd_soc_card *card, struct device_node *np,
 		dai_link->params = &codec_params;
 	} else {
 		dai_link->no_pcm = 1;
+		// if (gx_card_cpu_identify(dai_link->cpus, "I2S Decoder")) {
+		// 	dai_link->dpcm_capture = 1;
+		// 	dai_link->dai_fmt = meson_card_parse_daifmt(np,
+		// 				dai_link->cpus->of_node);
+		// }
 		snd_soc_dai_link_set_capabilities(dai_link);
 		/* Check if the cpu is the i2s encoder and parse i2s data */
-		if (gx_card_cpu_identify(dai_link->cpus, "I2S Encoder"))
+		if (gx_card_cpu_identify(dai_link->cpus, "I2S Encoder") ||
+		    gx_card_cpu_identify(dai_link->cpus, "I2S Decoder"))
 			ret = gx_card_parse_i2s(card, np, index);
 	}
 
