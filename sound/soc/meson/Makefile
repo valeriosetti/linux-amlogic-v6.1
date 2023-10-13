@@ -8,6 +8,7 @@ snd-soc-meson-aiu-objs += aiu-encoder-spdif.o
 snd-soc-meson-aiu-objs += aiu-fifo.o
 snd-soc-meson-aiu-objs += aiu-fifo-i2s.o
 snd-soc-meson-aiu-objs += aiu-fifo-spdif.o
+snd-soc-meson-aiu-objs += audin-toddr.o
 snd-soc-meson-axg-fifo-objs := axg-fifo.o
 snd-soc-meson-axg-frddr-objs := axg-frddr.o
 snd-soc-meson-axg-toddr-objs := axg-toddr.o
